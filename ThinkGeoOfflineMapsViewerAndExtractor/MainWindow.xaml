@@ -1,0 +1,45 @@
+﻿<Window x:Class="MBTilesExtractor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MBTilesExtractor"
+        xmlns:Wpf="clr-namespace:ThinkGeo.UI.Wpf;assembly=ThinkGeo.UI.Wpf"
+        mc:Ignorable="d"
+        Title="ThinkGeo Offline Maps Viewer and Extractor" Height="768" Width="1024" Loaded="Window_Loaded">
+    <Grid>
+        <Wpf:MapView Name="wpfMap" />
+        <Grid  Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="315">
+            <Border BorderBrush="#cfcfcf" BorderThickness="1" CornerRadius="4">
+                <Border.Background>
+                    <LinearGradientBrush EndPoint="0.504,1.391" StartPoint="0.505,-0.257">
+                        <GradientStop Color="#e7e7e7" Offset="0"/>
+                        <GradientStop Color="#ECECEC" Offset="0.7"/>
+                        <GradientStop Color="#e7e7e7" Offset="0.95"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Gray" BlurRadius="4" Opacity="0.6"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+
+                    <Border  Grid.Row="1" BorderBrush="#cfcfcf" Background="White" BorderThickness="0,1,0,1">
+                        <Grid Margin="5">
+                            <CheckBox x:Name="chkExtractingData" Checked="ChkExtractingData_Checked"  Unchecked="ChkExtractingData_Checked"  IsChecked="False"  Content="Extract Vector Tiles"  />
+                        </Grid>
+                    </Border>
+               
+                </Grid>
+            </Border>
+        </Grid>
+        <ProgressBar Name="pbExtractProgress" Height="20"  VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" IsIndeterminate="True" Visibility="Hidden"/>
+    </Grid>
+</Window>
