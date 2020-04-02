@@ -2,63 +2,26 @@
 
 ### Description
 
-The MBTiles Extractor allows you to create new smaller subsets from the MBTiles database. You simply specify the bounding box by tracking a rectangle shape on the map for the new area, then it will create a new SQLite database for that regions. 
+This sample shows you how to display the ThinkGeo Cloud Maps (mbtiles file) in an offline desktop application. This sample happens to use .NET Core, you can also create a .NET Framework application accomplishing the same thing. 
 
-*.MBTile format can be supported in all of the Map Suite controls such as Wpf, Web, MVC, WebApi, Android and iOS.
+This sample also allows you to create a new smaller subsets data from an existing MBTiles database by simply specify the extent of the new area on the map.  
 
-Please refer to [Wiki](https://wiki.thinkgeo.com/wiki/thinkgeo_desktop_for_wpf) for the details.
+*.MBTile format is supported in both Desktop and Mobile.
 
-![Screenshot](https://github.com/ThinkGeo/MBTilesExtractorSample-ForWpf.NETCore/blob/master/Screenshot.gif)
+![Screenshot](https://github.com/ThinkGeo/ThinkGeoOfflineMapsViewerAndExtractor-ForWpf12/blob/master/Screenshot.gif)
 
 ### About the Code
-The sample can extract MBTiles from source database to target database. One thing needs to be aware of: there are three tables ("map","images","metadata") need to be copied from source database to target database.
 ```csharp
-ThinkGeoMBTilesLayer.CreateDatabase(targetFilePath);
-var targetDBConnection = new SqliteConnection($"Data Source={targetFilePath}");
-var targetMap = new Map(targetDBConnection);
-var targetImages = new Images(targetDBConnection);
-var targetMetadata = new Metadata(targetDBConnection);
+ string mbtilesPathFilename = "Data/NewYorkCity.mbtiles";
+string defaultJsonFilePath = "Data/thinkgeo-world-streets-light.json";
 
-var sourceDBConnection = new SqliteConnection("Data Source=Data/tiles_Frisco.mbtiles");
-var sourceMap = new Map(sourceDBConnection);
-var sourceImages = new Images(sourceDBConnection);
-var sourceMetadata = new Metadata(sourceDBConnection);
+this.wpfMap.MapUnit = GeographyUnit.Meter;
+ThinkGeoMBTilesLayer thinkGeoMBTilesFeatureLayer = new ThinkGeoMBTilesLayer(mbtilesPathFilename, new Uri(defaultJsonFilePath, UriKind.Relative));
+            
+layerOverlay = new LayerOverlay();
+layerOverlay.Layers.Add(thinkGeoMBTilesFeatureLayer);
 
-sourceMetadata.NextPage();
-foreach (MetadataEntry entry in sourceMetadata.Entries)
-{
-    if (entry.Name.Equals("center"))
-    {
-        PointShape centerPoint = projection.ConvertToExternalProjection(bbox).GetCenterPoint();
-        entry.Value = $"{centerPoint.X},{centerPoint.Y},{maxZoom}";
-    }
-}
-targetMetadata.Insert(sourceMetadata.Entries);
-
-int recordLimit = 1000;
-foreach (var tileRange in tileRanges)
-{
-    long offset = 0;
-    bool isEnd = false;
-    while (!isEnd)
-    {
-        string querySql = $"SELECT * FROM {sourceMap.TableName} WHERE " + ConvetToSqlString(tileRange) 
-                            + $" LIMIT {offset},{recordLimit}";
-        var entries = sourceMap.Query(querySql);
-        targetMap.Insert(entries);
-
-        if (entries.Count < recordLimit)
-            isEnd = true;
-
-        querySql = $"SELECT images.tile_data as tile_data, images.tile_id as tile_id FROM {sourceImages.TableName} "
-                    + $WHERE images.tile_id IN ( SELECT {Map.TileIdColumnName} FROM {sourceMap.TableName} WHERE "
-                    + ConvetToSqlString(tileRange) + $" LIMIT {offset},{recordLimit} )";
-        entries = sourceImages.Query(querySql);
-        targetImages.Insert(entries);
-
-        offset = offset + recordLimit;
-    }
-}
+this.wpfMap.Overlays.Add(layerOverlay);
 ```
 ### Getting Help
 
