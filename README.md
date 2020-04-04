@@ -1,8 +1,10 @@
-# MBTiles Extractor Sample for WPF
+# ThinkGeo Offline Maps Viewer & Extractor
 
 ### Description
 
-This sample shows you how to display the ThinkGeo Cloud Maps (mbtiles file) in an offline desktop application. This sample happens to use .NET Core, you can also create a .NET Framework application accomplishing the same thing. 
+This sample shows you how to display the ThinkGeo Cloud Maps (mbtiles file) in an offline desktop application. Check out this sample to see how to get the ThinkGeo Cloud online map in an desktop application. 
+
+This sample  happens to use .NET Core, you can also create a .NET Framework application accomplishing the same thing. 
 
 This sample also allows you to create a new smaller subsets data from an existing MBTiles database by simply specify the extent of the new area on the map.  
 
@@ -12,7 +14,7 @@ This sample also allows you to create a new smaller subsets data from an existin
 
 ### About the Code
 ```csharp
- string mbtilesPathFilename = "Data/NewYorkCity.mbtiles";
+string mbtilesPathFilename = "Data/NewYorkCity.mbtiles";
 string defaultJsonFilePath = "Data/thinkgeo-world-streets-light.json";
 
 this.wpfMap.MapUnit = GeographyUnit.Meter;
