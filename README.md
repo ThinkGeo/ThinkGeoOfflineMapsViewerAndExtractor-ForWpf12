@@ -2,11 +2,11 @@
 
 ### Description
 
-This sample shows you how to display the ThinkGeo Cloud Maps (mbtiles file) in an offline desktop application. Check out [this sample](https://github.com/ThinkGeo/ThinkGeoCloudVectorMapsSample-ForWpf12) to see how to get the ThinkGeo Cloud online map in an desktop application. 
-
-This sample  happens to use .NET Core, you can also create a .NET Framework application accomplishing the same thing. 
+This sample shows you how to display the ThinkGeo Cloud offline maps in a desktop application. All the data it is using is in a 16.3M mbtiles database along with the sample. Check out [this sample](https://github.com/ThinkGeo/ThinkGeoCloudVectorMapsSample-ForWpf12) to see how to get the ThinkGeo Cloud online map in a desktop application. 
 
 This sample also allows you to create a new smaller subsets data from an existing MBTiles database by simply specify the extent of the new area on the map.  
+
+This sample happens to use .NET Core, you can also create a .NET Framework application accomplishing the same thing. 
 
 *.MBTile format is supported in both Desktop and Mobile.
 
