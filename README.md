@@ -6,7 +6,7 @@ This sample shows you how to display the ThinkGeo Cloud offline maps in a deskto
 
 This sample also allows you to create a new smaller subsets data from an existing MBTiles database by simply specify the extent of the new area on the map.  
 
-This sample happens to use .NET Core, you can also create a .NET Framework application accomplishing the same thing. 
+This sample happens to use .NET Core, you can also create a .NET Framework application accomplishing the same thing. [Here](https://github.com/ThinkGeo/ThinkGeoGoogleMapsOverlaySample-ForWpf12) is a sample using ThinkGeo 12 on .NET Framework 4.6.1.  
 
 *.MBTile format is supported in both Desktop and Mobile.
 
