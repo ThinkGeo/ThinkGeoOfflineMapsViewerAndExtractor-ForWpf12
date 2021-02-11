@@ -49,14 +49,14 @@ namespace MBTilesExtractor
                 localFilePath = saveFileDialog.FileName.ToString();
                 if (File.Exists(localFilePath)) File.Delete(localFilePath);
 
-                RectangleShape extractingBBox = trackShapeLayer.InternalFeatures.First().GetBoundingBox();
+                PolygonShape extractingPolygon = new PolygonShape(trackShapeLayer.InternalFeatures.First().GetWellKnownBinary());
 
                 wpfMap.TrackOverlay.TrackMode = TrackMode.None;
                 pbExtractProgress.Visibility = Visibility.Visible;
                 pbExtractProgress.IsEnabled = true;
                 Task.Factory.StartNew(() =>
                 {
-                    ExtractTiles(extractingBBox, localFilePath);
+                    ExtractTiles(extractingPolygon, localFilePath);
                     Dispatcher.Invoke(() =>
                     {
                         pbExtractProgress.IsEnabled = false;
@@ -80,11 +80,12 @@ namespace MBTilesExtractor
 
         private void ChkExtractingData_Checked(object sender, RoutedEventArgs e)
         {
-            wpfMap.TrackOverlay.TrackMode = chkExtractingData.IsChecked.Value ? TrackMode.Rectangle : TrackMode.None;
+            wpfMap.TrackOverlay.TrackMode = chkExtractingData.IsChecked.Value ? TrackMode.Polygon : TrackMode.None;
         }
 
-        private void ExtractTiles(RectangleShape bbox, string targetFilePath)
+        private void ExtractTiles(PolygonShape polygonShape, string targetFilePath)
         {
+            RectangleShape bbox = polygonShape.GetBoundingBox();
             List<VectorTileRange> tileRanges = new List<VectorTileRange>();
             for (int zoomLevel = 0; zoomLevel <= maxZoom; zoomLevel++)
             {
@@ -131,6 +132,14 @@ namespace MBTilesExtractor
                 {
                     string querySql = $"SELECT * FROM {sourceMap.TableName} WHERE " + ConvetToSqlString(tileRange) + $" LIMIT {offset},{recordLimit}";
                     var entries = sourceMap.Query(querySql);
+                    for (int i = entries.Count - 1; i >= 0; i--)
+                    {
+                        RectangleShape pbfExtent = GetPbfTileExent((int)entries[i].ZoomLevel, entries[i].TileColumn, entries[i].TileRow);
+                        if (polygonShape.IsDisjointed(pbfExtent))
+                        {
+                            entries.RemoveAt(i);
+                        }
+                    }
                     targetMap.Insert(entries);
 
                     if (entries.Count < recordLimit)
@@ -140,6 +149,20 @@ namespace MBTilesExtractor
                 }
             }
         }
+
+        private static RectangleShape GetPbfTileExent(int zoom, long column, long row)
+        {
+            long rowCount = (long)Math.Pow(2, zoom);
+
+            double cellWidth = MaxExtents.SphericalMercator.Width / rowCount;
+            double cellHeight = MaxExtents.SphericalMercator.Height / rowCount;
+
+            PointShape upperLeftPoint = new PointShape(MaxExtents.SphericalMercator.UpperLeftPoint.X + cellWidth * column, MaxExtents.SphericalMercator.LowerLeftPoint.Y + cellHeight * (row + 1));
+            PointShape lowerRightPoint = new PointShape(upperLeftPoint.X + cellWidth, upperLeftPoint.Y - cellHeight);
+
+            return new RectangleShape(upperLeftPoint, lowerRightPoint);
+        }
+
 
         private string ConvetToSqlString(VectorTileRange tileRange)
         {

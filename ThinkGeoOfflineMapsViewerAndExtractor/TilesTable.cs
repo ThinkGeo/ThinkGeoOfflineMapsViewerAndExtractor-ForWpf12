@@ -43,6 +43,7 @@ namespace MBTilesExtractor
             command.Transaction = dbTransaction as SqliteTransaction;
             try
             {
+                int ExecutedQueryCount = 0;
                 foreach (TilesEntry entry in entries)
                 {
                     command.Parameters[$"@{ZoomLevelColumnName}"].Value = ParseValue(entry.ZoomLevel);
@@ -51,6 +52,13 @@ namespace MBTilesExtractor
                     command.Parameters[$"@{TileIdColumnName}"].Value = ParseValue(entry.TileId);
                     command.Parameters[$"@{TileDataColumnName}"].Value = entry.TileData;
                     command.ExecuteNonQuery();
+                    ExecutedQueryCount++;
+                    if (ExecutedQueryCount % 1000 == 0)
+                    {
+                        dbTransaction.Commit();
+                        dbTransaction = connection.BeginTransaction();
+                        command.Transaction = dbTransaction as SqliteTransaction;
+                    }
                 }
                 dbTransaction.Commit();
             }
